@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="Keywords" content="js,audio recorder">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="initial-scale=1.0, width=device-width">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style type="text/css">
+        body {
+            position: absolute;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: center;
+            -webkit-justify-content: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
+            -ms-flex-align: center;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 10px;
+            /* background-color: #292826; */
+            font-family: 'Courier New', Courier, monospace;
+            background-image: url('https://wallup.net/wp-content/uploads/2016/01/52676-digital_art-simple_background-748x421.png');
+            background-size: 100%;
+
+        }
+
+        .holder {
+            background-color: rgba(255, 255, 255, 0.288);
+
+            color: White;
+            box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.2), 0 10px 20px 0 rgba(0, 0, 0, 0.19);
+
+            /* background-image: -webkit-gradient(linear, left bottom, left top, from(#4c474c), to(#141414)); */
+            /* background-image: -o-linear-gradient(bottom, #4c474c 0%, #141414 100%); */
+            /* background-image: linear-gradient(0deg, #4c474c 0%, #141414 100%); */
+            border-radius: 50px;
+            box-shadow: 10px;
+            padding: 50px;
+            text-align: center;
+            width: 50%;
+
+            /* width: 100%; */
+        }
+
+        [data-role="controls"]>button {
+            margin: 50px auto;
+            outline: none;
+            display: block;
+            border: none;
+            background-color: #317773;
+            background-image: -webkit-gradient(linear, left bottom, left top, from(#E2D1F9), to(#d4b9f7));
+            background-image: -o-linear-gradient(bottom, #D9AFD9 0%, #97D9E1 100%);
+            background-image: linear-gradient(0deg, #D9AFD9 0%, #97D9E1 100%);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            text-indent: -1000em;
+            cursor: pointer;
+            -webkit-box-shadow: 0px 5px 5px 2px rgba(0, 0, 0, 0.3) inset,
+                0px 0px 0px 30px #fff, 0px 0px 0px 35px #333;
+            box-shadow: 0px 5px 5px 2px rgba(0, 0, 0, 0.3) inset,
+                0px 0px 0px 30px #fff, 0px 0px 0px 35px #333;
+        }
+
+        [data-role="controls"]>button:hover {
+            background-color: #ee7bee;
+            background-image: -webkit-gradient(linear, left bottom, left top, from(#ee7bee), to(#6fe1f5));
+            background-image: -o-linear-gradient(bottom, #ee7bee 0%, #6fe1f5 100%);
+            background-image: linear-gradient(0deg, #ee7bee 0%, #6fe1f5 100%);
+        }
+
+        [data-role="controls"]>button[data-recording="true"] {
+            background-color: #ff2038;
+            background-image: -webkit-gradient(linear, left bottom, left top, from(#ff2038), to(#b30003));
+            background-image: -o-linear-gradient(bottom, #ff2038 0%, #b30003 100%);
+            background-image: linear-gradient(0deg, #ff2038 0%, #b30003 100%);
+        }
+
+        #response {
+            list-style-type: none;
+            padding: 0;
+            font-size: 16px;
+            font-weight: bold;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+    </style>
+    <script type="text/javascript" src="https://code.jquery.com/jquery.min.js"></script>
+    <script src="https://markjivko.com/dist/recorder.js"></script>
+    <script>
+        function get_data(products_name_qty, Store, timing, total_p) {
+
+            const li = document.createElement("li");
+            const li1 = document.createElement("li");
+            const li2 = document.createElement("li");
+            const li3 = document.createElement("li");
+            document.getElementById('response').innerText = " ";
+            li.innerText = products_name_qty;
+            document.getElementById('response').appendChild(li);
+            li1.innerText = Store;
+            document.getElementById('response').appendChild(li1);
+            li2.innerText = timing;
+            document.getElementById('response').appendChild(li2);
+            li3.innerText = total_p;
+            document.getElementById('response').appendChild(li3);
+
+        }
+        BASE_URL = ''
+        jQuery(document).ready(function () {
+            var $ = jQuery;
+            var myRecorder = {
+                objects: {
+                    context: null,
+                    stream: null,
+                    recorder: null
+                },
+                init: function () {
+                    if (null === myRecorder.objects.context) {
+                        myRecorder.objects.context = new (
+                            window.AudioContext || window.webkitAudioContext
+                        );
+                    }
+                },
+                start: function () {
+                    var options = { audio: true, video: false };
+                    navigator.mediaDevices.getUserMedia(options).then(function (stream) {
+                        myRecorder.objects.stream = stream;
+                        myRecorder.objects.recorder = new Recorder(
+                            myRecorder.objects.context.createMediaStreamSource(stream),
+                            { numChannels: 1 }
+                        );
+                        myRecorder.objects.recorder.record();
+                    }).catch(function (err) { });
+                },
+                stop: function (listObject) {
+                    if (null !== myRecorder.objects.stream) {
+                        myRecorder.objects.stream.getAudioTracks()[0].stop();
+                    }
+                    if (null !== myRecorder.objects.recorder) {
+                        myRecorder.objects.recorder.stop();
+
+                        // Validate object
+                        if (null !== listObject
+                            && 'object' === typeof listObject
+                            && listObject.length > 0) {
+                            // Export the WAV file
+                            myRecorder.objects.recorder.exportWAV(function (blob) {
+
+                                var responseText = "";
+
+                                fetch(`${BASE_URL}/upload`, {
+                                    method: "POST",
+                                    body: blob,
+                                    headers: {
+                                        "Content-Type": "application/octet-stream",
+                                    },
+                                })
+                                    .then(async (response) => {
+                                        responseText = await response.json();
+                                        var Store = "";
+                                        var timing = "";
+                                        var total_p = "";
+                                        var products_name_qty = " ";
+                                        console.log(responseText)
+                                        // var responseObj = $('#response').text(JSON.stringify(responseText));
+                                        
+                                        if (responseText.command_type === 1) {
+                                            if (responseText.store === 'UNDEFINED') {
+                                                alert('Please Specify Store');
+                                            }
+                                            else {
+                                                for (let i = 0; i < responseText.products.length; i++) {
+                                                    products_name_qty += "Product Name : ";
+                                                    products_name_qty += responseText.products[i].name;
+                                                    products_name_qty += ", Quantity : ";
+                                                    products_name_qty += responseText.products[i].quantity;
+                                                    products_name_qty += "\n";
+                                                }
+                                                Store = "Store : " + responseText.store;
+                                                timing = "Time : " + responseText.time;
+                                                total_p = "Total Amount : " + responseText.total;
+                                            }
+                                        }
+
+
+
+
+                                        if (responseText.command_type === 2) {
+                                            if (responseText.store === "UNDEFINED") {
+                                                alert("Select Store");
+                                            }
+                                            else {
+                                                Store = "Store : " +responseText.store;
+                                                get_data("", Store, "", "")
+                                            }
+                                        }
+                                        if (responseText.command_type === 3) {
+
+                                            Store = "Category : " +responseText.category;
+                                            get_data("", Store, "", "")
+                                        }
+                                        if (responseText === "SyntaxError: Unexpected token < in JSON at position 0") {
+                                            document.getElementById('response').innerText = " ";
+                                            document.getElementById('response').innerText = "Not Recognized";
+                                        }
+                                        else if (responseText.time === "UNDEFINED") {
+                                            alert("Select time");
+                                            get_data(products_name_qty, Store, timing, total_p);
+
+                                        }
+                                        else if (responseText.store === "UNDEFINED") {
+                                            alert("Select Store");
+                                        }
+                                        else {
+                                            get_data(products_name_qty, Store, timing, total_p);
+                                        }
+
+                                    })
+                                    .catch(err => document.getElementById('response').innerText = "Not Recognized");
+
+                            });
+                        }
+                    }
+                }
+            };
+
+            // Prepare the recordings list
+            var listObject = $('[data-role="recordings"]');
+
+            // Prepare the record button
+            $('[data-role="controls"] > button').click(function () {
+                // Initialize the recorder
+                myRecorder.init();
+
+                // Get the button state 
+                var buttonState = !!$(this).attr('data-recording');
+
+                // Toggle
+                if (!buttonState) {
+                    $(this).attr('data-recording', 'true');
+                    myRecorder.start();
+                } else {
+                    $(this).attr('data-recording', '');
+                    myRecorder.stop(listObject);
+                }
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="holder">
+
+        <div data-role="controls">
+            <h1 style="font-size: 44px;">VOICE BASED ORDERING</h1>
+            <button>Record</button>
+        </div>
+        <div data-role="recordings"></div>
+
+
+
+        <div>
+
+            <ul id='response'>
+            </ul>
+        </div>
+
+
+    </div>
+</body>
+
+</html>

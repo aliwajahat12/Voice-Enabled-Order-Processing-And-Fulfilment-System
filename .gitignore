@@ -1,0 +1,7 @@
+poc/
+__pycache__/
+*.pyc
+.env
+banded-arcana-337718-06d3bc030572.json
+instance/
+gui.ui

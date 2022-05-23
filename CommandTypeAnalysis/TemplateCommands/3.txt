@@ -1,0 +1,6 @@
+show me all cosmetic products 
+show me all food products 
+show me x type products 
+get all x category products
+show all category products
+show all clothes
